@@ -18,7 +18,7 @@ import numpy as np
 import pymc3 as pm
 import theano
 
-logger = logging.getLogger("exoplanet")
+logger = logging.getLogger("pymc3_ext")
 
 
 def get_args_for_theano_function(point=None, model=None):

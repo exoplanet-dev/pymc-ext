@@ -1,7 +1,7 @@
 import numpy as np
 import pymc3 as pm
 
-from exoplanet.utils import eval_in_model
+from pymc3_ext.utils import eval_in_model
 
 
 def test_eval_in_model(seed=123409):

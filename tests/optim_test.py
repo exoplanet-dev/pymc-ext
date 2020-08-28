@@ -3,8 +3,8 @@ import pymc3 as pm
 import pytest
 import theano.tensor as tt
 
-from exoplanet import optim as op
-from exoplanet.optim import optimize
+from pymc3_ext import optim as op
+from pymc3_ext.optim import optimize
 
 try:
     import torch

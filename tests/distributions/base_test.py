@@ -7,7 +7,7 @@ import pymc3 as pm
 import pytest
 from scipy.stats import kstest
 
-from exoplanet.distributions.base import (
+from pymc3_ext.distributions.base import (
     Angle,
     Periodic,
     UnitDisk,

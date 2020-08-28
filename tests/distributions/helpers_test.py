@@ -7,13 +7,13 @@ import theano
 import theano.tensor as tt
 from scipy.stats import invgamma
 
-from exoplanet.distributions.helpers import (
+from pymc3_ext.distributions.helpers import (
     estimate_inverse_gamma_parameters,
     get_log_abs_det_jacobian,
 )
-from exoplanet.orbits import KeplerianOrbit
 
 
+@pytest.mark.xfail(reason="KeplerianOrbit doesn't exist")
 def test_get_log_abs_det_jacobian():
     # Sorry this one's a bit convoluted...
     np.random.seed(20200409)

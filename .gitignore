@@ -16,7 +16,7 @@ backups
 .github_api_key
 htmlcov
 .eggs
-exoplanet_version.py
+pymc3_ext_version.py
 env
 venv-test
 .tox

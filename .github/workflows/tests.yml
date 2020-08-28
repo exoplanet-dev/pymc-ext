@@ -43,7 +43,7 @@ jobs:
 
       - name: Run tests
         shell: bash -l {0}
-        run: python -m pytest --cov=exoplanet -v tests
+        run: python -m pytest --cov=pymc3_ext -v tests
 
       # Uploading coverage report
       - name: Upload coverage

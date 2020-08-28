@@ -4,7 +4,7 @@ import numpy as np
 import pymc3 as pm
 import pytest
 
-from exoplanet.sampling import (
+from pymc3_ext.sampling import (
     QuadPotentialDenseAdapt,
     _WeightedCovariance,
     sample,
