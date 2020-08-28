@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
 
-__all__ = [
-    "unit_vector",
-    "unit_disk",
-    "angle",
-    "periodic"
-]
+__all__ = ["unit_vector", "unit_disk", "angle", "periodic"]
 
 import numpy as np
 import pymc3.distributions.transforms as tr
 import theano.tensor as tt
-from pymc3.distributions import draw_values
 
 
 class AbsoluteValueTransform(tr.Transform):
@@ -176,3 +170,6 @@ class PeriodicTransform(tr.Transform):
         if self.regularized is not None:
             return self.regularized * tt.log(sm) - 0.5 * sm
         return -0.5 * sm
+
+
+periodic = PeriodicTransform
