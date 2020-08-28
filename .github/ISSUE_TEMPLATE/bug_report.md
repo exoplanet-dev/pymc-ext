@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
+title: ""
 labels: bug
-assignees: ''
-
+assignees: ""
 ---
 
 **Describe the bug**
@@ -17,9 +16,11 @@ This section should include a simple, standalone code snippet that demonstrates 
 A clear and concise description of what you expected to happen.
 
 **Your setup (please complete the following information):**
- - Version of exoplanet:
- - Operating system:
- - Python version & installation method (pip, conda, etc.): 
+
+- Version of PyMC3:
+- Version of PyMC3-ext:
+- Operating system:
+- Python version & installation method (pip, conda, etc.):
 
 **Additional context**
 Add any other context about the problem here.

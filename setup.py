@@ -11,9 +11,9 @@ from setuptools import find_packages, setup
 
 # PROJECT SPECIFIC
 
-NAME = "exoplanet"
+NAME = "pymc3_ext"
 PACKAGES = find_packages(where="src")
-META_PATH = os.path.join("src", "exoplanet", "__init__.py")
+META_PATH = os.path.join("src", "pymc3_ext", "__init__.py")
 CLASSIFIERS = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -27,7 +27,8 @@ INSTALL_REQUIRES = [
     "theano>=1.0.4",
     "numpy>=1.13.0",
     "pymc3>=3.5",
-    "astropy>=3.1",
+]
+SETUP_REQUIRES = [
     "setuptools>=40.6.0",
     "setuptools_scm",
 ]
@@ -41,13 +42,6 @@ EXTRA_REQUIRE = {
         "pytest-cov>=2.6.1",
         "pytest-env",
         "coveralls",
-        "pybind11",
-        "celerite>=0.3.1",
-        "batman-package",
-        "rebound; sys_platform != 'win32'",
-        "starry; sys_platform != 'win32'",
-        "torch; sys_platform != 'win32'",
-        "torchvision; sys_platform != 'win32'",
     ],
     "docs": [
         "sphinx>=1.7.5",
@@ -58,18 +52,12 @@ EXTRA_REQUIRE = {
         "nbformat",
         "nbconvert",
         "corner",
-        "lightkurve",
         "jupytext",
-    ],
-    "nbody": [
-        "rebound; sys_platform != 'win32'",
-        "rebound_pymc3>=0.0.3; sys_platform != 'win32'",
     ],
 }
 EXTRA_REQUIRE["dev"] = (
     EXTRA_REQUIRE["test"]
     + EXTRA_REQUIRE["docs"]
-    + EXTRA_REQUIRE["nbody"]
     + [
         "pre-commit",
         "black",
@@ -79,7 +67,6 @@ EXTRA_REQUIRE["dev"] = (
         "flake8",
         "nbstripout",
         "jupytext",
-        "radvel",
         "jupyterlab",
         "lightkurve",
         "pep517",
@@ -129,6 +116,7 @@ if __name__ == "__main__":
         package_dir={"": "src"},
         include_package_data=True,
         install_requires=INSTALL_REQUIRES,
+        setup_requires=SETUP_REQUIRES,
         extras_require=EXTRA_REQUIRE,
         classifiers=CLASSIFIERS,
         zip_safe=False,
