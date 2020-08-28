@@ -63,7 +63,7 @@ class WindowedDiagAdapt(QuadPotential):
     def __init__(
         self,
         ndim,
-        update_steps,
+        update_steps=None,
         recompute_interval=1,
         dtype="float64",
         regularization_steps=0,
@@ -72,7 +72,10 @@ class WindowedDiagAdapt(QuadPotential):
         self.dtype = dtype
         self._ndim = int(ndim)
 
-        self._update_steps = np.atleast_1d(update_steps).astype(int)
+        if update_steps:
+            self._update_steps = np.atleast_1d(update_steps).astype(int)
+        else:
+            self._update_steps = np.array([], dtype=int)
         self._recompute_interval = int(recompute_interval)
 
         self._regularization_steps = int(regularization_steps)
@@ -119,6 +122,10 @@ class WindowedDiagAdapt(QuadPotential):
         # Update the variance every `recompute_interval` steps
         elif self._n_samples % self._recompute_interval == 0:
             self.update_var()
+
+    def set_var(self, var):
+        self._var = var
+        self.update_factors()
 
     def update_var(self):
         self._foreground.current_variance(out=self._var)
@@ -180,8 +187,9 @@ class WindowedFullAdapt(WindowedDiagAdapt):
         try:
             self._chol = cholesky(self._var, lower=True)
         except (LinAlgError, ValueError) as error:
-            print(f"error at {self._n_samples}")
             self._chol_error = error
+        else:
+            self._chol_error = None
 
     def velocity(self, x, out=None):
         return np.dot(self._var, x, out=out)

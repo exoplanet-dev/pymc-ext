@@ -27,6 +27,7 @@ INSTALL_REQUIRES = [
     "theano>=1.0.4",
     "numpy>=1.13.0",
     "pymc3>=3.5",
+    "scipy",
 ]
 SETUP_REQUIRES = [
     "setuptools>=40.6.0",
@@ -34,7 +35,6 @@ SETUP_REQUIRES = [
 ]
 EXTRA_REQUIRE = {
     "test": [
-        "scipy",
         "nose",
         "parameterized",
         "arviz",
