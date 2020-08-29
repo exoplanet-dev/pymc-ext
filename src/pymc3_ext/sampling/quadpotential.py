@@ -72,7 +72,7 @@ class WindowedDiagAdapt(QuadPotential):
         self.dtype = dtype
         self._ndim = int(ndim)
 
-        if update_steps:
+        if update_steps is not None:
             self._update_steps = np.atleast_1d(update_steps).astype(int)
         else:
             self._update_steps = np.array([], dtype=int)
