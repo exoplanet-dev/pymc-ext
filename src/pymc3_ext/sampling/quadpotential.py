@@ -65,9 +65,9 @@ class WindowedDiagAdapt(QuadPotential):
         ndim,
         update_steps=None,
         recompute_interval=1,
-        dtype="float64",
         regularization_steps=0,
         regularization_variance=1e-8,
+        dtype="float64",
     ):
         self.dtype = dtype
         self._ndim = int(ndim)

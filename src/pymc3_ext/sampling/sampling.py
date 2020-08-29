@@ -4,10 +4,9 @@ __all__ = ["sample"]
 
 import numpy as np
 import pymc3 as pm
-from pymc3.blocking import ArrayOrdering
 from pymc3.model import all_continuous, modelcontext
 
-from .groups import ParameterGroup
+from .groups import build_parameter_groups
 from .quadpotential import BlockedQuadPotential
 from .schedule import build_schedule
 from .step_size import WindowedDualAverageAdaptation
@@ -39,8 +38,7 @@ def sample(
     model = modelcontext(model)
     if not all_continuous(model.vars):
         raise ValueError(
-            "NUTS can only be used for models with only "
-            "continuous variables."
+            "NUTS can only be used for models with only continuous variables."
         )
 
     if step_kwargs is None:
@@ -54,31 +52,17 @@ def sample(
         cooldown_window=cooldown_window,
     )
 
-    # Check the parameter groups
-    if parameter_groups is None:
-        parameter_groups = []
-    variables = step_kwargs.get("vars", model.free_RVs)
-    ordering = ArrayOrdering(variables)
-    remaining = set(variables)
-    for group in parameter_groups:
-        this_group = set(group.variables)
-        if len(this_group & remaining) != len(this_group):
-            raise ValueError("parameters can only be included in one group")
-        remaining -= this_group
-    if len(remaining):
-        parameter_groups.append(
-            ParameterGroup(list(remaining), adapt_type=adapt_type, model=model)
-        )
-
-    # Compute the indices for each parameter group
-    for group in parameter_groups:
-        group.compute_indices(
-            ordering,
-            update_steps,
-            recompute_interval=recompute_interval,
-            regularization_steps=regularization_steps,
-            regularization_variance=regularization_variance,
-        )
+    # Construct the parameter groups for all the variables
+    parameter_groups = build_parameter_groups(
+        step_kwargs.get("vars", model.free_RVs),
+        update_steps,
+        parameter_groups=parameter_groups,
+        adapt_type=adapt_type,
+        recompute_interval=recompute_interval,
+        regularization_steps=regularization_steps,
+        regularization_variance=regularization_variance,
+        model=model,
+    )
 
     # Construct the potential
     potential = BlockedQuadPotential(model.ndim, parameter_groups)
