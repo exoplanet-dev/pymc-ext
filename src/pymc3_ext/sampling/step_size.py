@@ -10,6 +10,7 @@ class WindowedDualAverageAdaptation(DualAverageAdaptation):
     def __init__(self, update_steps, initial_step, target, *args, **kwargs):
         self.update_steps = np.atleast_1d(update_steps).astype(int)
         self.targets = np.atleast_1d(target) + np.zeros_like(self.update_steps)
+        self._initial_step = initial_step
         super().__init__(initial_step, self.targets[0], *args, **kwargs)
         self._n_samples = 0
         self.reset()
