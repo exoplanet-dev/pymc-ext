@@ -120,7 +120,10 @@ class WindowedDiagAdapt(QuadPotential):
             self.update_var()
 
         # Update the variance every `recompute_interval` steps
-        elif self._n_samples % self._recompute_interval == 0:
+        elif (
+            self._recompute_interval
+            and self._n_samples % self._recompute_interval == 0
+        ):
             self.update_var()
 
     def set_var(self, var):
