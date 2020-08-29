@@ -29,7 +29,7 @@ class UnitUniform(pm.Flat):
             testval = 0.5 + np.zeros(shape)
         kwargs["testval"] = kwargs.pop("testval", testval)
 
-        super(UnitUniform, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _random(self, size=None):
         return np.random.uniform(0, 1, size)
@@ -56,7 +56,7 @@ class UnitVector(pm.Normal):
 
     def __init__(self, *args, **kwargs):
         kwargs["transform"] = tr.unit_vector
-        super(UnitVector, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _random(self, size=None):
         x = np.random.normal(size=size)
@@ -101,7 +101,7 @@ class UnitDisk(pm.Flat):
             if shape != 2:
                 raise ValueError("the first dimension should be exactly 2")
 
-        super(UnitDisk, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # Work out some reasonable starting values for the parameters
         self._default = np.zeros(shape)
@@ -151,7 +151,7 @@ class Angle(pm.Continuous):
         else:
             testval = np.zeros(shape)
         kwargs["testval"] = kwargs.pop("testval", testval)
-        super(Angle, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _random(self, size=None):
         return np.random.uniform(-np.pi, np.pi, size)
@@ -200,7 +200,7 @@ class Periodic(pm.Continuous):
         else:
             testval = 0.5 * (lower + upper) + np.zeros(shape)
         kwargs["testval"] = kwargs.pop("testval", testval)
-        super(Periodic, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     def _random(self, size=None):
         return np.random.uniform(self.lower, self.upper, size)

@@ -103,7 +103,7 @@ class AngleTransform(tr.Transform):
 
     def __init__(self, *args, **kwargs):
         self.regularized = kwargs.pop("regularized", 10.0)
-        super(AngleTransform, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def backward(self, y):
         return tt.arctan2(y[0], y[1])
@@ -150,7 +150,7 @@ class PeriodicTransform(tr.Transform):
         self.mid_ = 0.5 * (lower + upper)
         self.delta_ = 0.5 * (upper - lower) / np.pi
         self.regularized = kwargs.pop("regularized", 10.0)
-        super(PeriodicTransform, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     def backward(self, y):
         return self.mid + self.delta * tt.arctan2(y[0], y[1])
