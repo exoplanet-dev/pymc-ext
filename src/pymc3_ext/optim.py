@@ -2,7 +2,6 @@
 
 __all__ = ["optimize"]
 
-import os
 import sys
 
 import numpy as np
@@ -25,7 +24,7 @@ from .utils import (
 )
 
 
-def start_optimizer(vars, verbose=True, progress_bar=True, **kwargs):
+def start_optimizer(vars, verbose=True, progress_bar=None, **kwargs):
     if verbose:
         names = [
             get_untransformed_name(v.name)
@@ -37,11 +36,13 @@ def start_optimizer(vars, verbose=True, progress_bar=True, **kwargs):
             "optimizing logp for variables: [{0}]\n".format(", ".join(names))
         )
 
-        if progress_bar is True:
-            if "EXOPLANET_NO_AUTO_PBAR" in os.environ:
-                from tqdm import tqdm
-            else:
-                from tqdm.auto import tqdm
+        if progress_bar == "auto" or progress_bar is True:
+            from tqdm.auto import tqdm
+
+            progress_bar = tqdm(**kwargs)
+
+        elif progress_bar == "tqdm":
+            from tqdm import tqdm
 
             progress_bar = tqdm(**kwargs)
 
@@ -70,7 +71,7 @@ def optimize(
     model=None,
     return_info=False,
     verbose=True,
-    progress_bar=True,
+    progress_bar=None,
     **kwargs
 ):
     """Maximize the log prob of a PyMC3 model using scipy
@@ -85,8 +86,9 @@ def optimize(
         return_info: Return both the coordinate dictionary and the result of
             ``scipy.optimize.minimize``
         verbose: Print the success flag and log probability to the screen
-        progress_bar: A ``tqdm`` progress bar instance. Set to ``True``
-            (default) to use ``tqdm.auto.tqdm()``. Set to ``False`` to disable.
+        progress_bar: A ``tqdm`` progress bar instance. Set to ``'auto'``
+            to use ``tqdm.auto.tqdm()``, ``'tqdm'`` to use ``tqdm.tqdm()``.
+            Set to ``None`` to disable (default).
 
     """
     from scipy.optimize import minimize
@@ -135,12 +137,13 @@ def optimize(
 
 
 def optimize_iterator(
-    stepper, maxiter=1000, start=None, vars=None, model=None, **kwargs
+    stepper,
+    maxiter=1000,
+    start=None,
+    vars=None,
+    model=None,
 ):
-    """Maximize the log prob of a PyMC3 model using scipy
-
-    All extra arguments are passed directly to the ``scipy.optimize.minimize``
-    function.
+    """Maximize the log prob of a PyMC3 model using a custom stepper function
 
     Args:
         stepper: An optimizer object
@@ -148,11 +151,6 @@ def optimize_iterator(
         start: The PyMC3 coordinate dictionary of the starting position
         vars: The variables to optimize
         model: The PyMC3 model
-        return_info: Return both the coordinate dictionary and the result of
-            ``scipy.optimize.minimize``
-        verbose: Print the success flag and log probability to the screen
-        progress_bar: A ``tqdm`` progress bar instance. Set to ``True``
-            (default) to use ``tqdm.auto.tqdm()``. Set to ``False`` to disable.
 
     """
     wrapper = ModelWrapper(start=start, vars=vars, model=model)

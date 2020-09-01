@@ -5,7 +5,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.3.2
+#       jupytext_version: 1.5.2
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -48,13 +48,16 @@ cov = np.dot(L, L.T)
 
 # %%
 import pymc3 as pm
-import exoplanet as xo
 
 with pm.Model() as model:
-    pm.MvNormal("x", mu=np.zeros(ndim), chol=L, shape=(ndim,))
-    trace = pm.sample(
-        tune=2000, draws=2000, chains=2, cores=2, step=xo.get_dense_nuts_step()
-    )
+    pm.MvNormal("x", mu=np.zeros(ndim), chol=L, shape=ndim)
+    trace = pm.sample(tune=500, draws=500, chains=2, cores=2)
+
+# %%
+import pymc3_ext as pmx
+
+with model:
+    tracex = pmx.sample(tune=1000, draws=1000, chains=2, cores=2)
 
 # %% [markdown]
 # This is a little more verbose than the standard use of PyMC3, but the performance is several orders of magnitude better than you would get without the mass matrix tuning.
@@ -62,6 +65,9 @@ with pm.Model() as model:
 
 # %%
 pm.summary(trace)
+
+# %%
+pm.summary(tracex)
 
 # %% [markdown]
 # ## Evaluating model components for specific samples

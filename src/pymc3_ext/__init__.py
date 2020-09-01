@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
 
 __all__ = [
-    "__version__",
     "distributions",
+    "optim",
+    "sampling",
+    "optimize",
+    "__version__",
+    "sample",
 ]
 
-from . import distributions
+from . import distributions, optim, sampling
+from .optim import optimize
 from .pymc3_ext_version import __version__
+from .sampling import sample
 
 __uri__ = "https://docs.exoplanet.codes"
 __author__ = "Daniel Foreman-Mackey"

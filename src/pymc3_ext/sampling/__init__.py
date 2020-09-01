@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-__all__ = ["QuadPotentialDenseAdapt", "get_dense_nuts_step", "sample"]
+__all__ = ["sample", "ParameterGroup"]
 
-from .deprecated import QuadPotentialDenseAdapt, get_dense_nuts_step
+from .groups import ParameterGroup
 from .sampling import sample
