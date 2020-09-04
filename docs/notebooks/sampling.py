@@ -73,20 +73,21 @@ with model:
 # We can compare the sampling summaries to confirm that the default method did not produce reliable results in this case, while the `pymc3_ext` version did:
 
 # %%
-pm.summary(trace)
+pm.summary(trace).head()
 
 # %%
-pm.summary(tracex)
+pm.summary(tracex).head()
 
 # %% [markdown]
 # ## Parameter groups
 #
+# If you are fitting a model with a large number of parameters, it might not be computationally or numerically tractable to
 
 # %%
 with pm.Model() as model2:
     pm.MvNormal("x", mu=np.zeros(ndim), chol=L, shape=ndim)
     pm.MvNormal("y", mu=np.zeros(ndim), chol=L, shape=ndim)
-    pm.MvNormal("z", mu=np.zeros(ndim), chol=L, shape=ndim)
+    pm.Normal("z", shape=ndim)  # Uncorrelated
 
 # %%
 with model2:
@@ -100,7 +101,7 @@ with model2:
         chains=2,
         cores=2,
         parameter_groups=[
-            pmx.sampling.ParameterGroup([model2.x]),
+            pmx.sampling.ParameterGroup([model2.x], "diag"),
             pmx.sampling.ParameterGroup([model2.y]),
             pmx.sampling.ParameterGroup([model2.z]),
         ],

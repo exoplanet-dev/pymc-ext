@@ -39,6 +39,7 @@ jobs:
           python -m pip install -U pip
           python -m pip install "${{ matrix.pymc-version }}"
           python -m pip install -U -e .[test]
+          python -m pip install torch==1.6.0+cpu torchvision==0.7.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
           python -c 'import theano; print(theano.config.__str__(print_doc=False))'
 
       - name: Run tests

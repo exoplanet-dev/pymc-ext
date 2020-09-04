@@ -7,6 +7,7 @@ import sys
 import numpy as np
 import pymc3 as pm
 import theano
+from fastprogress.fastprogress import progress_bar
 from pymc3.blocking import ArrayOrdering, DictToArrayBijection
 from pymc3.model import Point
 from pymc3.theanof import inputvars
@@ -16,6 +17,7 @@ from pymc3.util import (
     is_transformed_name,
     update_start_vals,
 )
+from scipy.optimize import minimize
 
 from .utils import (
     get_args_for_theano_function,
@@ -24,7 +26,8 @@ from .utils import (
 )
 
 
-def start_optimizer(vars, verbose=True, progress_bar=None, **kwargs):
+def start_optimizer(maxeval, vars, verbose=True, progress=True, **kwargs):
+    progressbar = None
     if verbose:
         names = [
             get_untransformed_name(v.name)
@@ -36,23 +39,11 @@ def start_optimizer(vars, verbose=True, progress_bar=None, **kwargs):
             "optimizing logp for variables: [{0}]\n".format(", ".join(names))
         )
 
-        if progress_bar == "auto" or progress_bar is True:
-            from tqdm.auto import tqdm
+        if progress:
+            progressbar = progress_bar(range(maxeval), total=maxeval)
+            progressbar.update(0)
 
-            progress_bar = tqdm(**kwargs)
-
-        elif progress_bar == "tqdm":
-            from tqdm import tqdm
-
-            progress_bar = tqdm(**kwargs)
-
-    # Check whether the input progress bar has the expected methods
-    has_progress_bar = (
-        hasattr(progress_bar, "set_postfix")
-        and hasattr(progress_bar, "update")
-        and hasattr(progress_bar, "close")
-    )
-    return has_progress_bar, progress_bar
+    return progressbar
 
 
 def get_point(wrapper, x):
@@ -68,10 +59,11 @@ def get_point(wrapper, x):
 def optimize(
     start=None,
     vars=None,
-    model=None,
     return_info=False,
     verbose=True,
-    progress_bar=None,
+    progress=True,
+    maxeval=5000,
+    model=None,
     **kwargs
 ):
     """Maximize the log prob of a PyMC3 model using scipy
@@ -91,37 +83,50 @@ def optimize(
             Set to ``None`` to disable (default).
 
     """
-    from scipy.optimize import minimize
-
     wrapper = ModelWrapper(start=start, vars=vars, model=model)
-    has_progress_bar, progress_bar = start_optimizer(
-        wrapper.vars, verbose=verbose, progress_bar=progress_bar
+    progressbar = start_optimizer(
+        maxeval, wrapper.vars, verbose=verbose, progress=progress
     )
+
+    # Count the number of function calls
+    neval = 0
 
     # This returns the objective function and its derivatives
     def objective(vec):
+        nonlocal neval
+        neval += 1
         nll, grad = wrapper(vec)
-        if verbose and has_progress_bar:
-            progress_bar.set_postfix(logp="{0:e}".format(-nll))
-            progress_bar.update()
+        if progressbar:
+            progressbar.comment = "logp = {0:.3e}".format(-nll)
+            progressbar.update_bar(neval)
+
+        if neval > maxeval:
+            raise StopIteration
+
         return nll, grad
 
     # Optimize using scipy.optimize
     x0 = wrapper.bij.map(wrapper.start)
     initial = objective(x0)[0]
     kwargs["jac"] = True
-    info = minimize(objective, x0, **kwargs)
+
+    try:
+        info = minimize(objective, x0, **kwargs)
+    except (KeyboardInterrupt, StopIteration):
+        info = None
+    finally:
+        if progressbar:
+            progressbar.total = neval
+            progressbar.update(neval)
+            print()
 
     # Only accept the output if it is better than it was
-    x = info.x if (np.isfinite(info.fun) and info.fun < initial) else x0
+    x = info.x if info and np.isfinite(info.fun) and info.fun < initial else x0
 
     # Coerce the output into the right format
     point = get_point(wrapper, x)
 
     if verbose:
-        if has_progress_bar:
-            progress_bar.close()
-
         sys.stderr.write("message: {0}\n".format(info.message))
         sys.stderr.write("logp: {0} -> {1}\n".format(-initial, -info.fun))
         if not np.isfinite(info.fun):

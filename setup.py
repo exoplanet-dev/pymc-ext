@@ -28,6 +28,7 @@ INSTALL_REQUIRES = [
     "scipy",
     "theano>=1.0.4",
     "pymc3>=3.8",
+    "fastprogress",
 ]
 SETUP_REQUIRES = [
     "setuptools>=40.6.0",

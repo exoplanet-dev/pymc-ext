@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import pymc3 as pm
 import pytest
@@ -13,12 +15,13 @@ except ImportError:
 
 
 def test_optimize(seed=1234):
+    warnings.filterwarnings("error")
     np.random.seed(seed)
     x_val = np.random.randn(5, 3)
     with pm.Model():
         pm.Normal("x", shape=x_val.shape, testval=x_val)
-        soln1 = optimize(verbose=False)
-        soln2, info = optimize(soln1, return_info=True, verbose=False)
+        soln1 = optimize()
+        soln2, info = optimize(soln1, return_info=True)
 
     assert np.allclose(soln1["x"], 0.0)
     assert np.allclose(soln2["x"], 0.0)
@@ -31,7 +34,7 @@ def test_optimize_exception(capsys):
         chol = tt.slinalg.Cholesky(on_error="raise")(cov)
         pm.MvNormal("x", mu=np.zeros(5), chol=chol, shape=5)
         with pytest.raises(np.linalg.LinAlgError):
-            optimize({"cov": np.zeros((5, 5))}, verbose=False)
+            optimize({"cov": np.zeros((5, 5))})
         captured = capsys.readouterr()
         assert "array:" in captured.out
         assert "point:" in captured.out
