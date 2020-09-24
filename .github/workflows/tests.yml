@@ -48,7 +48,7 @@ jobs:
         run: python -m pytest --cov=pymc3_ext -v tests
 
       - name: Coveralls
-        uses: AndreMiras/coveralls-python-action@develop
+        uses: exoplanet-dev/coveralls-python-action@develop
         continue-on-error: true
         with:
           parallel: true
@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
-      uses: AndreMiras/coveralls-python-action@develop
+      uses: exoplanet-dev/coveralls-python-action@develop
       with:
         parallel-finished: true
         debug: true
