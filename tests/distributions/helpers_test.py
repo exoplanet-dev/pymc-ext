@@ -13,32 +13,22 @@ from pymc3_ext.distributions.helpers import (
 )
 
 
-@pytest.mark.xfail(reason="KeplerianOrbit doesn't exist")
 def test_get_log_abs_det_jacobian():
     # Sorry this one's a bit convoluted...
     np.random.seed(20200409)
 
-    log_duration = tt.dscalar()
-    log_duration.tag.test_value = 0.1
-    r_star = tt.dscalar()
-    r_star.tag.test_value = 0.73452
-    orbit = KeplerianOrbit(
-        period=10.0,
-        t0=0.0,
-        b=0.5,
-        duration=tt.exp(log_duration),
-        r_star=r_star,
-    )
-    log_m = tt.log(orbit.m_star)
-    log_rho = tt.log(orbit.rho_star)
-    log_abs_det = get_log_abs_det_jacobian(
-        [log_duration, r_star], [log_m, log_rho]
-    )
+    a = tt.dscalar()
+    a.tag.test_value = 0.1
+    b = tt.dscalar()
+    b.tag.test_value = 0.73452
 
-    func = theano.function(
-        [log_duration, r_star], tt.stack((log_m, log_rho, log_abs_det))
-    )
-    in_args = [log_duration.tag.test_value, r_star.tag.test_value]
+    c = a + b
+    d = a * b
+
+    log_abs_det = get_log_abs_det_jacobian([a, b], [c, d])
+
+    func = theano.function([a, b], tt.stack((c, d, log_abs_det)))
+    in_args = [a.tag.test_value, b.tag.test_value]
     grad = []
     for n in range(2):
         grad.append(
