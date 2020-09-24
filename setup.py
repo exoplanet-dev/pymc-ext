@@ -62,14 +62,12 @@ EXTRA_REQUIRE["dev"] = (
     + [
         "pre-commit",
         "black",
-        "black_nbconvert",
         "isort",
         "toml",
         "flake8",
         "nbstripout",
         "jupytext",
         "jupyterlab",
-        "lightkurve",
         "pep517",
         "twine",
     ]

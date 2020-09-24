@@ -5,7 +5,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.5.2
+#       jupytext_version: 1.6.0
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -101,9 +101,9 @@ with model2:
         chains=2,
         cores=2,
         parameter_groups=[
-            pmx.sampling.ParameterGroup([model2.x], "diag"),
+            pmx.sampling.ParameterGroup([model2.x]),
             pmx.sampling.ParameterGroup([model2.y]),
-            pmx.sampling.ParameterGroup([model2.z]),
+            pmx.sampling.ParameterGroup([model2.z], "diag"),
         ],
     )
 

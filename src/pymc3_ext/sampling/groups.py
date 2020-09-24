@@ -2,7 +2,6 @@
 
 __all__ = ["ParameterGroup"]
 
-import numpy as np
 import pymc3 as pm
 from pymc3.blocking import ArrayOrdering
 from pymc3.theanof import inputvars
@@ -24,10 +23,13 @@ def build_parameter_groups(
     # Check the parameter groups
     if parameter_groups is None:
         parameter_groups = []
-    ordering = ArrayOrdering(variables)
     remaining = set(variables)
-    for group in parameter_groups:
-        this_group = set(group.variables)
+    for i, group in enumerate(parameter_groups):
+        try:
+            this_group = set(group.variables)
+        except AttributeError:
+            this_group = set(group)
+            parameter_groups[i] = ParameterGroup(list(this_group), model=model)
         if len(this_group & remaining) != len(this_group):
             raise ValueError("parameters can only be included in one group")
         remaining -= this_group
@@ -36,10 +38,8 @@ def build_parameter_groups(
             ParameterGroup(list(remaining), adapt_type=adapt_type, model=model)
         )
 
-    # Compute the indices for each parameter group
     for group in parameter_groups:
-        group.compute_indices(
-            ordering,
+        group.setup_potential(
             update_steps,
             recompute_interval=recompute_interval,
             regularization_steps=regularization_steps,
@@ -69,14 +69,9 @@ class ParameterGroup:
         self.variables = inputvars(variables)
         allinmodel(self.variables, model)
         self.adapt_type = adapt_type
+        self.size = ArrayOrdering(variables).size
 
-    def compute_indices(self, ordering, update_steps, **kwargs):
-        inds = np.arange(ordering.size)
-        these_inds = []
-        for v in self.variables:
-            these_inds.append(inds[ordering[v.name].slc])
-        self.indices = np.sort(np.concatenate(these_inds))
-
+    def setup_potential(self, update_steps, **kwargs):
         self.potential = dict(full=WindowedFullAdapt, diag=WindowedDiagAdapt)[
             self.adapt_type
-        ](len(self.indices), update_steps, **kwargs)
+        ](self.size, update_steps, **kwargs)
