@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.7", "3.8"]
-        pymc-version: ["pymc3==3.8", "pymc3>=3.9,<3.10"]
+        pymc-version: ["pymc3==3.8", "pymc3==3.9"]
         include:
           - python-version: "3.8"
             pymc-version: "https://github.com/pymc-devs/pymc3/archive/master.zip"
@@ -28,6 +28,14 @@ jobs:
         with:
           fetch-depth: 0
           submodules: true
+
+      - uses: actions/cache@v2
+        if: github.event_name != 'release'
+        with:
+          path: ~/.theano
+          key: ${{ runner.os }}-theano-py${{ matrix.python-version }}-${{ matrix.pymc-version }}
+          restore-keys: |
+            ${{ runner.os }}-theano-py${{ matrix.python-version }}-${{ matrix.pymc-version }}
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: goanpeca/setup-miniconda@v1
@@ -49,13 +57,13 @@ jobs:
         shell: bash -l {0}
         run: python -m pytest --cov=pymc3_ext -v tests
 
-      - name: Coveralls
+      - name: Coverage
         uses: exoplanet-dev/coveralls-python-action@develop
         continue-on-error: true
         with:
           parallel: true
 
-  coveralls_finish:
+  coverage:
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -63,7 +71,6 @@ jobs:
       uses: exoplanet-dev/coveralls-python-action@develop
       with:
         parallel-finished: true
-        debug: true
 
   build:
     name: Build source distribution
