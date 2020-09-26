@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 __all__ = [
-    "distributions",
     "optim",
     "sampling",
     "optimize",
@@ -9,13 +8,14 @@ __all__ = [
     "sample",
 ]
 
-from . import distributions, optim, sampling
+from . import optim, sampling
 from .optim import optimize
 from .pymc3_ext_version import __version__
 from .sampling import sample
+from .distributions import *  # noqa
 
-__uri__ = "https://docs.exoplanet.codes"
+__uri__ = "https://github.com/exoplanet-dev/pymc3-ext"
 __author__ = "Daniel Foreman-Mackey"
 __email__ = "foreman.mackey@gmail.com"
 __license__ = "MIT"
-__description__ = "Useful(?) extensions to PyMC3"
+__description__ = 'PyMC3 Extras extracted from the "exoplanet" library'
