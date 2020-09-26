@@ -1,4 +1,4 @@
-# PyMC3 Extras & Extenstions
+# PyMC3 Extras
 
 This library include various experimental or otherwise special purpose extras for use with PyMC3 that have been extracted from the [exoplanet](https://docs.exoplanet.codes) project.
 The most widely useful component is probably the custom tuning functions for the PyMC3 NUTS sampler that is [described below](#NUTS-tuning), but it also includes some helper functions for [non-linear optimization](#Optimization) and [some custom distributions](#Distributions).
