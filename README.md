@@ -104,3 +104,9 @@ Here is a list of the included distributions and a short description:
 - `pmx.Angle`: An angle constrained to be in the range -pi to pi. The actual sampling is performed in the two dimensional vector space ``(sin(theta), cos(theta))`` so that the sampler doesn't see a discontinuity at pi. As a technical detail, the performance of this distribution can be affected using the `regularization` parameter which helps deal with pathelogical geometries introduced when this parameter is well/poorly constrained. The default value (`10.0`) was selected as a reasonable default choice, but you might get better performance by adjusting this.
 - `pmx.Periodic`: An extension to `pmx.Angle` that supports arbitrary upper and lower bounds for the allowed range.
 - `pmx.UnitUniform`: This distribution is equivalent to `pm.Uniform(lower=0, upper=1)`, but it can be more numerically stable in some cases.
+
+## License
+
+Copyright 2020 Dan Foreman-Mackey and contributors.
+
+pymc3-ext is free software made available under the MIT License. For details see the LICENSE file.
