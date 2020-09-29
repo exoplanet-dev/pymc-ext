@@ -69,7 +69,7 @@ def sample(
 
     # Using this potential build a proposal step
     if "step" in kwargs:
-        raise ValueError("you cannot provide a `step` argument to xo.sample")
+        raise ValueError("you cannot provide a `step` argument to `sample`")
     step = pm.NUTS(potential=potential, model=model, **step_kwargs)
     potential.set_ordering(step._logp_dlogp_func._ordering)
 

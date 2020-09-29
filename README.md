@@ -3,7 +3,7 @@
 This library include various experimental or otherwise special purpose extras for use with PyMC3 that have been extracted from the [exoplanet](https://docs.exoplanet.codes) project.
 The most widely useful component is probably the custom tuning functions for the PyMC3 NUTS sampler that is [described below](#NUTS-tuning), but it also includes some helper functions for [non-linear optimization](#Optimization) and [some custom distributions](#Distributions).
 
-You'll find the usage instructions below and automatically generated tutorial notebooks on the [`tutorials` branch on GitHub](https://github.com/exoplanet-dev/pymc3-ext/tree/tutorials).
+You'll find the usage instructions below and automatically generated tutorial notebooks on the [`notebooks` branch on GitHub](https://github.com/exoplanet-dev/pymc3-ext/tree/notebooks).
 
 ## Installation
 
@@ -37,7 +37,7 @@ with model:
 
 This adjusts the defaults (dense mass matrix adaptation and higher target acceptance fraction, for example) to be more in line with the needs of users in astrophysics, but it also provides some other features that might improve sampling performance.
 
-The main features are described below, but more details can be found in the Sampling tutorial notebook.
+The main features are described below, but more details can be found in the [Sampling tutorial notebook](https://github.com/exoplanet-dev/pymc3-ext/blob/notebooks/notebooks/sampling.ipynb).
 
 ### Tuning schedule
 
@@ -90,8 +90,6 @@ with model:
     soln = pmx.optimize(vars=[var1, var2])
     soln = pmx.optimize(start=soln, vars=[var3])
 ```
-
-You can find more examples in the Optimization tutorial notebook.
 
 ## Distributions
 
