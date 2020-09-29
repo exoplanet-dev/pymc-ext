@@ -51,7 +51,7 @@ EXTRA_REQUIRE = {
 }
 EXTRA_REQUIRE["dev"] = (
     EXTRA_REQUIRE["test"]
-    + EXTRA_REQUIRE["docs"]
+    + EXTRA_REQUIRE["notebooks"]
     + [
         "pre-commit",
         "black",
