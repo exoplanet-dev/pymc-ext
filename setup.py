@@ -44,15 +44,8 @@ EXTRA_REQUIRE = {
         "pytest-env",
         "coveralls",
     ],
-    "docs": [
-        "sphinx>=1.7.5",
-        "pandoc",
-        "jupyter",
-        "ipywidgets",
-        "sphinx-typlog-theme",
-        "nbformat",
+    "notebooks": [
         "nbconvert",
-        "corner",
         "jupytext",
     ],
 }
