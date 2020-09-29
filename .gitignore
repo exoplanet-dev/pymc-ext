@@ -21,3 +21,4 @@ env
 venv-test
 .tox
 .envrc
+notebooks/*.ipynb
