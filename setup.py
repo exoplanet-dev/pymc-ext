@@ -47,7 +47,7 @@ EXTRA_REQUIRE = {
     "notebooks": [
         "nbconvert",
         "jupytext",
-        "ipython",
+        "ipykernel",
     ],
 }
 EXTRA_REQUIRE["dev"] = (
