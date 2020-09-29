@@ -45,8 +45,11 @@ jobs:
       - name: Push to an orphan branch
         run: |
           git checkout --orphan notebooks
+          cp notebooks/notebook_setup.py .
+          mv notebooks/*.ipynb .
           git rm -rf .
-          git add -f notebooks/*.ipynb
+          git add notebook_setup.py
+          git add -f *.ipynb
           git -c user.name='A Robot' -c user.email='robot' commit -m "Updating the notebooks"
           git push -q -f https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY notebooks
         env:
