@@ -1,0 +1,56 @@
+name: Notebooks
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  release:
+    types:
+      - published
+
+jobs:
+  notebooks:
+    name: "Run the tutorial notebooks"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.theano
+          key: ${{ runner.os }}-theano-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-theano-
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install -U pip
+          python -m pip install ".[notebooks]"
+
+      - name: Execute the notebooks
+        run: |
+          jupytext --to ipynb --execute notebooks/*.py
+          rm notebooks/notebook_setup.ipynb
+
+      - name: Push to an orphan branch
+        run: |
+          git checkout --orphan notebooks
+          tar -cf bkp.tar README.md LICENSE notebooks/notebook_setup.py
+          git rm -rf .
+          tar -xf bkp.tar
+          rm bkp.tar
+          git add .
+          git -c user.name='A Robot' -c user.email='robot' commit -m "Updating the notebooks"
+          git push -q -f https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY notebooks
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -44,32 +44,24 @@ EXTRA_REQUIRE = {
         "pytest-env",
         "coveralls",
     ],
-    "docs": [
-        "sphinx>=1.7.5",
-        "pandoc",
-        "jupyter",
-        "ipywidgets",
-        "sphinx-typlog-theme",
-        "nbformat",
+    "notebooks": [
         "nbconvert",
-        "corner",
         "jupytext",
+        "ipykernel",
     ],
 }
 EXTRA_REQUIRE["dev"] = (
     EXTRA_REQUIRE["test"]
-    + EXTRA_REQUIRE["docs"]
+    + EXTRA_REQUIRE["notebooks"]
     + [
         "pre-commit",
         "black",
-        "black_nbconvert",
         "isort",
         "toml",
         "flake8",
         "nbstripout",
         "jupytext",
         "jupyterlab",
-        "lightkurve",
         "pep517",
         "twine",
     ]

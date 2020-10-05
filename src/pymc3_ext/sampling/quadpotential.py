@@ -17,6 +17,19 @@ class BlockedQuadPotential(QuadPotential):
         self.dtype = dtype
         self.n = int(n)
         self.groups = groups
+        self.ordering = None
+        self.vmap = None
+
+    def set_ordering(self, ordering):
+        self.ordering = ordering
+        self.vmap = []
+        inds = np.arange(self.n)
+        for group in self.groups:
+            self.vmap.append(
+                np.concatenate(
+                    [inds[self.ordering[v.name].slc] for v in group.variables]
+                )
+            )
 
     def reset(self):
         for group in self.groups:
@@ -25,9 +38,8 @@ class BlockedQuadPotential(QuadPotential):
     def velocity(self, x, out=None):
         if out is None:
             out = np.zeros_like(x)
-        for group in self.groups:
-            i = group.indices
-            out[i] = group.potential.velocity(x[i])
+        for inds, group in zip(self.vmap, self.groups):
+            out[inds] = group.potential.velocity(x[inds])
         return out
 
     def energy(self, x, velocity=None):
@@ -41,18 +53,16 @@ class BlockedQuadPotential(QuadPotential):
 
     def random(self):
         out = np.empty(self.n)
-        for group in self.groups:
-            out[group.indices] = group.potential.random()
+        for inds, group in zip(self.vmap, self.groups):
+            out[inds] = group.potential.random()
         return out
 
     def update(self, sample, grad, tune):
         if not tune:
             return
 
-        for group in self.groups:
-            group.potential.update(
-                sample[group.indices], grad[group.indices], tune
-            )
+        for inds, group in zip(self.vmap, self.groups):
+            group.potential.update(sample[inds], grad[inds], tune)
 
     def raise_ok(self, vmap):
         for group in self.groups:
