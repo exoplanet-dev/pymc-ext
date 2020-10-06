@@ -24,11 +24,7 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3",
 ]
 INSTALL_REQUIRES = [
-    "numpy",
-    "scipy",
-    "theano>=1.0.4",
-    "pymc3>=3.8",
-    "fastprogress",
+    "pymc3>=3.9",
 ]
 SETUP_REQUIRES = [
     "setuptools>=40.6.0",
