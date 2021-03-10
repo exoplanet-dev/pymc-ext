@@ -3,8 +3,8 @@
 import numpy as np
 import pymc3 as pm
 
-from pymc3_ext.sampling.sampling import sample
 from pymc3_ext.sampling.groups import ParameterGroup
+from pymc3_ext.sampling.sampling import sample
 
 
 def test_basic():
