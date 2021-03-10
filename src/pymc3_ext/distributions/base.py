@@ -55,7 +55,18 @@ class UnitVector(pm.Normal):
     """
 
     def __init__(self, *args, **kwargs):
-        kwargs["transform"] = tr.unit_vector
+        kwargs["transform"] = kwargs.pop("transform", tr.unit_vector)
+
+        shape = kwargs.get("shape", None)
+        if shape is None:
+            testval = 1.0
+        else:
+            testval = np.ones(shape)
+        kwargs["testval"] = kwargs.pop("testval", testval)
+        kwargs["testval"] /= np.sqrt(
+            np.sum(kwargs["testval"] ** 2, axis=-1, keepdims=True)
+        )
+
         super().__init__(*args, **kwargs)
 
     def _random(self, size=None):

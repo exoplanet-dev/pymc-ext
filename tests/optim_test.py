@@ -1,5 +1,3 @@
-import warnings
-
 import aesara_theano_fallback.tensor as tt
 import numpy as np
 import pymc3 as pm
@@ -15,7 +13,6 @@ except ImportError:
 
 
 def test_optimize(seed=1234):
-    warnings.filterwarnings("error")
     np.random.seed(seed)
     x_val = np.random.randn(5, 3)
     with pm.Model():
