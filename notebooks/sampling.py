@@ -73,10 +73,12 @@ with model:
 # We can compare the sampling summaries to confirm that the default method did not produce reliable results in this case, while the `pymc3_ext` version did:
 
 # %%
-pm.summary(trace).head()
+import arviz as az
+
+az.summary(trace).head()
 
 # %%
-pm.summary(tracex).head()
+az.summary(tracex).head()
 
 # %% [markdown]
 # In this particular case, you could get similar performance using the `init="adapt_full"` argument to the `sample` function in PyMC3, but the implementation in `pymc3-ext` is somewhat more flexible.

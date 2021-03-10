@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import arviz as az
 import numpy as np
 import pymc3 as pm
 
@@ -13,7 +14,7 @@ def test_basic():
     with pm.Model():
         pm.Normal("x", shape=5)
         trace = sample(chains=4, draws=1000, progressbar=False)
-        assert np.all(pm.summary(trace)["r_hat"] < 1.01)
+        assert np.all(az.summary(trace)["r_hat"] < 1.01)
 
     assert trace["x"].shape == (4000, 5)
 
@@ -40,4 +41,4 @@ def test_correlated_groups():
             ],
             progressbar=False,
         )
-        assert np.all(pm.summary(trace)["r_hat"] < 1.01)
+        assert np.all(az.summary(trace)["r_hat"] < 1.01)
