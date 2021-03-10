@@ -6,7 +6,7 @@ import sys
 
 import numpy as np
 import pymc3 as pm
-import theano
+from aesara_theano_fallback import aesara as theano
 from fastprogress.fastprogress import progress_bar
 from pymc3.blocking import ArrayOrdering, DictToArrayBijection
 from pymc3.model import Point

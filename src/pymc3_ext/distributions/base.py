@@ -2,9 +2,9 @@
 
 __all__ = ["UnitUniform", "UnitVector", "UnitDisk", "Angle", "Periodic"]
 
+import aesara_theano_fallback.tensor as tt
 import numpy as np
 import pymc3 as pm
-import theano.tensor as tt
 from pymc3.distributions import generate_samples
 
 from . import transforms as tr
@@ -79,7 +79,7 @@ class UnitDisk(pm.Flat):
 
     .. code-block:: python
 
-        import theano.tensor as tt
+        import aesara_theano_fallback.tensor as tt
         disk = UnitDisk("disk")
         radius = tt.sum(disk ** 2, axis=0)
 

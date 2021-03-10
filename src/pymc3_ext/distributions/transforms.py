@@ -2,9 +2,9 @@
 
 __all__ = ["unit_vector", "unit_disk", "angle", "periodic"]
 
+import aesara_theano_fallback.tensor as tt
 import numpy as np
 import pymc3.distributions.transforms as tr
-import theano.tensor as tt
 
 
 class AbsoluteValueTransform(tr.Transform):
