@@ -6,11 +6,16 @@ import sys
 
 import numpy as np
 import pymc3 as pm
-import theano
+from aesara_theano_fallback import aesara as theano
 from fastprogress.fastprogress import progress_bar
+
+try:
+    from pymc3.aesaraf import inputvars
+except ImportError:
+    from pymc3.theanof import inputvars
+
 from pymc3.blocking import ArrayOrdering, DictToArrayBijection
 from pymc3.model import Point
-from pymc3.theanof import inputvars
 from pymc3.util import (
     get_default_varnames,
     get_untransformed_name,

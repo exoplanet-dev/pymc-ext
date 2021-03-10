@@ -3,8 +3,12 @@
 __all__ = ["ParameterGroup"]
 
 import pymc3 as pm
+
+try:
+    from pymc3.aesaraf import inputvars
+except ImportError:
+    from pymc3.theanof import inputvars
 from pymc3.blocking import ArrayOrdering
-from pymc3.theanof import inputvars
 
 from .quadpotential import WindowedDiagAdapt, WindowedFullAdapt
 

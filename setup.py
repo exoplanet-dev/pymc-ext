@@ -25,6 +25,7 @@ CLASSIFIERS = [
 ]
 INSTALL_REQUIRES = [
     "pymc3>=3.9",
+    "aesara-theano-fallback>=0.0.2",
 ]
 SETUP_REQUIRES = [
     "setuptools>=40.6.0",

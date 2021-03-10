@@ -12,16 +12,22 @@ on:
 
 jobs:
   test:
-    name: "${{ matrix.pymc-version }} on py${{ matrix.python-version }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8"]
-        pymc-version: ["pymc3==3.8", "pymc3==3.9"]
+        python-version: ["3.9"]
+        arviz-version: ["arviz"]
+        pymc-version:
+          - "pymc3~=3.11.0"
+          - "https://github.com/pymc-devs/pymc3/archive/master.zip"
         include:
-          - python-version: "3.8"
-            pymc-version: "https://github.com/pymc-devs/pymc3/archive/master.zip"
+          - python-version: "3.9"
+            arviz-version: "arviz<0.11"
+            pymc-version: "pymc3~=3.9.0"
+          - python-version: "3.9"
+            arviz-version: "arviz<0.11"
+            pymc-version: "pymc3~=3.10.0"
 
     steps:
       - uses: actions/checkout@v2
@@ -29,36 +35,25 @@ jobs:
           fetch-depth: 0
           submodules: true
 
-      - uses: actions/cache@v2
-        if: github.event_name != 'release'
-        with:
-          path: ~/.theano
-          key: ${{ runner.os }}-theano-py${{ matrix.python-version }}-${{ matrix.pymc-version }}
-          restore-keys: |
-            ${{ runner.os }}-theano-py${{ matrix.python-version }}-${{ matrix.pymc-version }}
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: goanpeca/setup-miniconda@v1
+      - uses: actions/setup-python@v2
+        name: Install Python
         with:
           python-version: ${{ matrix.python-version }}
-          auto-update-conda: true
 
       # Setup
       - name: Install dependencies
         shell: bash -l {0}
         run: |
           python -m pip install -U pip
-          python -m pip install "${{ matrix.pymc-version }}"
+          python -m pip install "${{ matrix.pymc-version }}" "${{ matrix.arviz-version }}"
           python -m pip install -U -e .[test]
-          python -m pip install torch==1.6.0+cpu torchvision==0.7.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
-          python -c 'import theano; print(theano.config.__str__(print_doc=False))'
 
       - name: Run tests
         shell: bash -l {0}
         run: python -m pytest --cov=pymc3_ext -v tests
 
       - name: Coverage
-        uses: exoplanet-dev/coveralls-python-action@develop
+        uses: AndreMiras/coveralls-python-action@v20201129
         continue-on-error: true
         with:
           parallel: true
@@ -67,10 +62,10 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-    - name: Coveralls Finished
-      uses: exoplanet-dev/coveralls-python-action@develop
-      with:
-        parallel-finished: true
+      - name: Coveralls Finished
+        uses: AndreMiras/coveralls-python-action@v20201129
+        with:
+          parallel-finished: true
 
   build:
     name: Build source distribution
@@ -84,22 +79,19 @@ jobs:
       - uses: actions/setup-python@v2
         name: Install Python
         with:
-          python-version: "3.8"
+          python-version: "3.9"
 
       - name: Build
         run: |
-          python -m pip install -U pip pep517 twine setuptools_scm
-          python -m pep517.build .
-      - name: Test the sdist
-        run: |
-          python -m venv venv-sdist
-          venv-sdist/bin/python -m pip install dist/pymc3_ext*.tar.gz
-          venv-sdist/bin/python -c "import pymc3_ext;print(pymc3_ext.__version__)"
+          python -m pip install -U pip
+          python -m pip install -U build
+          python -m build .
+
       - name: Test the wheel
         run: |
-          python -m venv venv-wheel
-          venv-wheel/bin/python -m pip install dist/pymc3_ext*.whl
-          venv-wheel/bin/python -c "import pymc3_ext;print(pymc3_ext.__version__)"
+          python -m pip install twine
+          twine check dist/*
+
       - uses: actions/upload-artifact@v2
         with:
           path: dist/*
@@ -114,7 +106,7 @@ jobs:
           name: artifact
           path: dist
 
-      - uses: pypa/gh-action-pypi-publish@master
+      - uses: pypa/gh-action-pypi-publish@v1.4.2
         with:
           user: __token__
           password: ${{ secrets.pypi_password }}

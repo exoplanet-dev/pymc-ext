@@ -2,9 +2,9 @@
 
 __all__ = ["UnitUniform", "UnitVector", "UnitDisk", "Angle", "Periodic"]
 
+import aesara_theano_fallback.tensor as tt
 import numpy as np
 import pymc3 as pm
-import theano.tensor as tt
 from pymc3.distributions import generate_samples
 
 from . import transforms as tr
@@ -55,7 +55,18 @@ class UnitVector(pm.Normal):
     """
 
     def __init__(self, *args, **kwargs):
-        kwargs["transform"] = tr.unit_vector
+        kwargs["transform"] = kwargs.pop("transform", tr.unit_vector)
+
+        shape = kwargs.get("shape", None)
+        if shape is None:
+            testval = 1.0
+        else:
+            testval = np.ones(shape)
+        kwargs["testval"] = kwargs.pop("testval", testval)
+        kwargs["testval"] /= np.sqrt(
+            np.sum(kwargs["testval"] ** 2, axis=-1, keepdims=True)
+        )
+
         super().__init__(*args, **kwargs)
 
     def _random(self, size=None):
@@ -79,7 +90,7 @@ class UnitDisk(pm.Flat):
 
     .. code-block:: python
 
-        import theano.tensor as tt
+        import aesara_theano_fallback.tensor as tt
         disk = UnitDisk("disk")
         radius = tt.sum(disk ** 2, axis=0)
 

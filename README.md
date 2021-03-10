@@ -7,7 +7,7 @@ You'll find the usage instructions below and automatically generated tutorial no
 
 ## Installation
 
-You'll need a Python installation (tested on versions 3.7 and 3.8) and it can often be best to install PyMC3 and Theano using [`conda`](https://docs.conda.io/en/latest/) so that it can handle all the details of compiler setup.
+You'll need a Python installation (tested on versions 3.7 and 3.8) and it can often be best to install PyMC3 using [`conda`](https://docs.conda.io/en/latest/) so that it can handle all the details of compiler setup.
 This step is **optional**, but I would normally create a clean conda environment for projects that use PyMC3:
 
 ```bash
@@ -22,7 +22,7 @@ The easiest way to install this package is using `pip`:
 python -m pip install -U pymc3-ext
 ```
 
-This will also update the dependencies like PyMC3 and Theano, which is probably what you want because this is only tested on recent versions of both of those packages.
+This will also update the dependencies like PyMC3, which is probably what you want because this is only tested on recent versions of both of those packages.
 
 ## NUTS tuning
 
@@ -42,7 +42,7 @@ The main features are described below, but more details can be found in the [Sam
 ### Tuning schedule
 
 One main difference between `pmx.sample` and the standard one implemented in PyMC3 is the tuning schedule.
-In PyMC3, the default tuning schedule is very simple: *(a)* update the step size parameter every step, and *(b)* update the mass matrix every *N* steps.
+In PyMC3, the default tuning schedule is very simple: _(a)_ update the step size parameter every step, and _(b)_ update the mass matrix every _N_ steps.
 In reality the procedure is slightly more convoluted, but this is the gist.
 `pmx.sample` instead uses a "fast" and "slow" update schedule with doubling adaptation windows that is nearly identical to [the scheme used by the Stan project](https://mc-stan.org/docs/2_24/reference-manual/hmc-algorithm-parameters.html).
 We have found that this can significantly outperform the default algorithm and rarely leads to worse performance.
@@ -99,7 +99,7 @@ Here is a list of the included distributions and a short description:
 
 - `pmx.UnitVector`: A vector where the sum of squares is fixed to unity. For a multidimensional shape, the normalization is performed along the last dimension.
 - `pmx.UnitDisk`: Two dimensional parameters constrianed to live within the unit disk. This will be useful when you have an angle and a magnitude that must be in the range zero to one (for example, an eccentricity vector for a bound orbit). This distribution is constrained such that the sum of squares along the zeroth axis will always be less than one. Note that the shape of this distribution must be two in the zeroth axis.
-- `pmx.Angle`: An angle constrained to be in the range -pi to pi. The actual sampling is performed in the two dimensional vector space ``(sin(theta), cos(theta))`` so that the sampler doesn't see a discontinuity at pi. As a technical detail, the performance of this distribution can be affected using the `regularization` parameter which helps deal with pathelogical geometries introduced when this parameter is well/poorly constrained. The default value (`10.0`) was selected as a reasonable default choice, but you might get better performance by adjusting this.
+- `pmx.Angle`: An angle constrained to be in the range -pi to pi. The actual sampling is performed in the two dimensional vector space `(sin(theta), cos(theta))` so that the sampler doesn't see a discontinuity at pi. As a technical detail, the performance of this distribution can be affected using the `regularization` parameter which helps deal with pathelogical geometries introduced when this parameter is well/poorly constrained. The default value (`10.0`) was selected as a reasonable default choice, but you might get better performance by adjusting this.
 - `pmx.Periodic`: An extension to `pmx.Angle` that supports arbitrary upper and lower bounds for the allowed range.
 - `pmx.UnitUniform`: This distribution is equivalent to `pm.Uniform(lower=0, upper=1)`, but it can be more numerically stable in some cases.
 
