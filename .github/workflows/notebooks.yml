@@ -39,8 +39,7 @@ jobs:
 
       - name: Execute the notebooks
         run: |
-          jupytext --to ipynb --execute notebooks/*.py
-          rm notebooks/notebook_setup.ipynb
+          jupytext --to ipynb --execute notebooks/sampling.py
 
       - name: Push to an orphan branch
         run: |
