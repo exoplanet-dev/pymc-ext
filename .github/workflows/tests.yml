@@ -37,11 +37,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-theano-py${{ matrix.python-version }}-${{ matrix.pymc-version }}
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: goanpeca/setup-miniconda@v1
+      - uses: actions/setup-python@v2
+        name: Install Python
         with:
           python-version: ${{ matrix.python-version }}
-          auto-update-conda: true
 
       # Setup
       - name: Install dependencies
