@@ -8,7 +8,7 @@ import pymc3.distributions.transforms as tr
 
 
 class AbsoluteValueTransform(tr.Transform):
-    """"""
+    """ """
 
     name = "absolutevalue"
 
