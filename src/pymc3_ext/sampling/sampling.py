@@ -2,6 +2,9 @@
 
 __all__ = ["sample"]
 
+import multiprocessing
+import platform
+
 import numpy as np
 import pymc3 as pm
 from pymc3.model import all_continuous, modelcontext
@@ -93,5 +96,14 @@ def sample(
     step.step_adapt = WindowedDualAverageAdaptation(
         update_steps, step.step_size, target, gamma, k, t0
     )
+
+    # Override mp_ctx on macos
+    mp_ctx = kwargs.get("mp_ctx", None)
+    if mp_ctx is None:
+        # Closes issue https://github.com/pymc-devs/pymc3/issues/3849
+        if platform.system() == "Darwin":
+            mp_ctx = "fork"
+        mp_ctx = multiprocessing.get_context(mp_ctx)
+    kwargs["mp_ctx"] = mp_ctx
 
     return pm.sample(draws=draws, tune=tune, model=model, step=step, **kwargs)
