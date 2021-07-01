@@ -131,7 +131,7 @@ def optimize(
     # Coerce the output into the right format
     point = get_point(wrapper, x)
 
-    if verbose:
+    if verbose and info is not None:
         sys.stderr.write("message: {0}\n".format(info.message))
         sys.stderr.write("logp: {0} -> {1}\n".format(-initial, -info.fun))
         if not np.isfinite(info.fun):
