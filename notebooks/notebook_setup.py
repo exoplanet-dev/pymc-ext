@@ -2,8 +2,8 @@
 
 get_ipython().magic('config InlineBackend.figure_format = "retina"')
 
-import os
 import logging
+import os
 import warnings
 
 import matplotlib.pyplot as plt
