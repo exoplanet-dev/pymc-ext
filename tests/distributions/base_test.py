@@ -70,7 +70,7 @@ class TestBase(_Base):
             # Test random sampling
             samples = dist.random(size=100)
             assert np.shape(samples) == (100, 2, 3)
-            assert np.allclose(np.sum(samples ** 2, axis=-1), 1.0)
+            assert np.allclose(np.sum(samples**2, axis=-1), 1.0)
 
             logp = np.sum(
                 UnitVector.dist(shape=(2, 3)).logp(samples).eval(), axis=-1
@@ -108,7 +108,7 @@ class TestBase(_Base):
             # Test random sampling
             samples = dist.random(size=100)
             assert np.shape(samples) == (100, 2, 3)
-            assert np.all(np.sum(samples ** 2, axis=1) <= 1.0)
+            assert np.all(np.sum(samples**2, axis=1) <= 1.0)
 
             logp = np.sum(
                 UnitDisk.dist(shape=(2, 3)).logp(samples).eval(), axis=-1

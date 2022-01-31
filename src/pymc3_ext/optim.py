@@ -294,7 +294,7 @@ class Adam:
         exp_avg[:] *= beta1
         exp_avg[:] += (1 - beta1) * grad
         exp_avg_sq[:] *= beta2
-        exp_avg_sq[:] += (1 - beta2) * grad ** 2
+        exp_avg_sq[:] += (1 - beta2) * grad**2
         if self.amsgrad:
             # Maintains the maximum of all 2nd moment running avg. till now
             max_exp_avg_sq[:] = np.maximum(max_exp_avg_sq, exp_avg_sq)
