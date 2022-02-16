@@ -71,7 +71,7 @@ class UnitVector(pm.Normal):
 
     def _random(self, size=None):
         x = np.random.normal(size=size)
-        return x / np.sqrt(np.sum(x ** 2, axis=-1, keepdims=True))
+        return x / np.sqrt(np.sum(x**2, axis=-1, keepdims=True))
 
     def random(self, point=None, size=None):
         return generate_samples(

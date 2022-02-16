@@ -24,6 +24,7 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3",
 ]
 INSTALL_REQUIRES = [
+    "numpy<1.22",
     "pymc3>=3.9",
     "aesara-theano-fallback>=0.0.2",
 ]
