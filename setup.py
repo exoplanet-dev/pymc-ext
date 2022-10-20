@@ -11,9 +11,9 @@ from setuptools import find_packages, setup
 
 # PROJECT SPECIFIC
 
-NAME = "pymc3_ext"
+NAME = "pymc_ext"
 PACKAGES = find_packages(where="src")
-META_PATH = os.path.join("src", "pymc3_ext", "__init__.py")
+META_PATH = os.path.join("src", "pymc_ext", "__init__.py")
 CLASSIFIERS = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -23,47 +23,15 @@ CLASSIFIERS = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
 ]
-INSTALL_REQUIRES = [
-    "numpy<1.22",
-    "pymc3>=3.9",
-    "aesara-theano-fallback>=0.0.2",
-]
-SETUP_REQUIRES = [
-    "setuptools>=40.6.0",
-    "setuptools_scm",
-]
+INSTALL_REQUIRES = ["pymc"]
 EXTRA_REQUIRE = {
-    "test": [
-        "nose",
-        "parameterized",
-        "arviz",
-        "pytest",
-        "pytest-cov>=2.6.1",
-        "pytest-env",
-        "coveralls",
-    ],
+    "test": ["pytest"],
     "notebooks": [
         "nbconvert",
         "jupytext",
         "ipykernel",
     ],
 }
-EXTRA_REQUIRE["dev"] = (
-    EXTRA_REQUIRE["test"]
-    + EXTRA_REQUIRE["notebooks"]
-    + [
-        "pre-commit",
-        "black",
-        "isort",
-        "toml",
-        "flake8",
-        "nbstripout",
-        "jupytext",
-        "jupyterlab",
-        "pep517",
-        "twine",
-    ]
-)
 
 # END PROJECT SPECIFIC
 
@@ -107,7 +75,6 @@ if __name__ == "__main__":
         package_dir={"": "src"},
         include_package_data=True,
         install_requires=INSTALL_REQUIRES,
-        setup_requires=SETUP_REQUIRES,
         extras_require=EXTRA_REQUIRE,
         classifiers=CLASSIFIERS,
         zip_safe=False,

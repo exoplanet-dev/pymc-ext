@@ -1,73 +1,21 @@
-import aesara_theano_fallback.tensor as tt
+import aesara.tensor as at
 import numpy as np
-import pymc3 as pm
+import pymc as pm
 import pytest
 
-from pymc3_ext import optim as op
-from pymc3_ext.optim import optimize
-
-try:
-    import torch
-except ImportError:
-    torch = None
+from pymc_ext.optim import optimize
 
 
 def test_optimize(seed=1234):
-    np.random.seed(seed)
-    x_val = np.random.randn(5, 3)
+    random = np.random.default_rng(seed)
+    x_val = random.standard_normal(size=(5, 3))
     with pm.Model():
-        pm.Normal("x", shape=x_val.shape, testval=x_val)
+        x = pm.Normal("x", shape=x_val.shape, initval=x_val)
+        y = pm.Normal("y", shape=x_val.shape, initval=x_val)
         soln1 = optimize()
-        soln2, info = optimize(soln1, return_info=True)
+        soln2 = optimize(vars=[x + y])
 
     assert np.allclose(soln1["x"], 0.0)
+    assert np.allclose(soln1["y"], 0.0)
     assert np.allclose(soln2["x"], 0.0)
-    assert info.success
-
-
-def test_optimize_exception(capsys):
-    with pm.Model():
-        cov = pm.Normal("cov", mu=np.eye(5), shape=(5, 5))
-        chol = tt.slinalg.Cholesky(on_error="raise")(cov)
-        pm.MvNormal("x", mu=np.zeros(5), chol=chol, shape=5)
-        with pytest.raises(np.linalg.LinAlgError):
-            optimize({"cov": np.zeros((5, 5))})
-        captured = capsys.readouterr()
-        assert "array:" in captured.out
-        assert "point:" in captured.out
-
-
-def rosenbrock(x):
-    return (1 - x[0]) ** 2 + 100 * (x[1] - x[0] ** 2) ** 2
-
-
-@pytest.mark.skipif(torch is None, reason="torch is not installed")
-@pytest.mark.parametrize(
-    "kwargs",
-    [
-        {},
-        {"lr": 1e-4},
-        {"lr": 1e-4, "betas": [0.92, 0.96]},
-        {"lr": 1e-4, "betas": [0.92, 0.96], "eps": 1e-3},
-        {"lr": 1e-4, "weight_decay": 0.1},
-        {"amsgrad": True},
-    ],
-)
-def test_adam(kwargs, seed=20200520):
-    np.random.seed(seed)
-    x0 = np.random.randn(2)
-
-    x_torch = torch.tensor(x0, dtype=torch.float64, requires_grad=True)
-    optimizer = torch.optim.Adam([x_torch], **kwargs)
-
-    with pm.Model():
-        x = pm.Flat("x", shape=2, testval=x0)
-        pm.Potential("rosenbrock", -rosenbrock(x))
-        for obj, point in op.optimize_iterator(
-            op.Adam(**kwargs), 100, vars=[x]
-        ):
-            optimizer.zero_grad()
-            loss = rosenbrock(x_torch)
-            loss.backward()
-            optimizer.step()
-            assert np.allclose(x_torch.detach().numpy(), point["x"])
+    assert np.allclose(soln2["y"], 0.0)
