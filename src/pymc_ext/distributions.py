@@ -1,9 +1,10 @@
 __all__ = ["angle", "unit_disk"]
 
 import warnings
+
+import aesara.tensor as at
 import numpy as np
 import pymc as pm
-import aesara.tensor as at
 
 
 def angle(name, *, regularization=10.0, **kwargs):
