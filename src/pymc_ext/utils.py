@@ -37,7 +37,7 @@ def eval_in_model(outs, point=None, model=None, seed=None, **kwargs):
     """
     if point is None:
         model = pm.modelcontext(model)
-        point = model.initial_point(seed=seed)
+        point = model.initial_point(random_seed=seed)
     return Evaluator(outs, **kwargs)(point)
 
 
