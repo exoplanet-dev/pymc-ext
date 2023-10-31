@@ -1,8 +1,8 @@
 __all__ = ["optimize"]
 
 import pymc as pm
-from aesara.graph.basic import graph_inputs
-from aesara.tensor.var import TensorConstant, TensorVariable
+from pytensor.graph.basic import graph_inputs
+from pytensor.tensor.variable import TensorConstant, TensorVariable
 
 
 def optimize(start=None, vars=None, **kwargs):
@@ -13,7 +13,7 @@ def optimize(start=None, vars=None, **kwargs):
 
         # find_MAP only supports passing in members of free_RVs, so let's deal
         # with that here...
-        vars = pm.aesaraf.rvs_to_value_vars(vars)
+        vars = pm.pytensorf.rvs_to_value_vars(vars)
         vars = [
             v
             for v in graph_inputs(vars)

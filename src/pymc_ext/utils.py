@@ -5,13 +5,14 @@ import pymc as pm
 
 
 class Evaluator:
+    # TODO: Add some documentation
     def __init__(self, outs, **kwargs):
         if isinstance(outs, (tuple, list)):
-            self.out_values = pm.aesaraf.rvs_to_value_vars(outs)
+            self.out_values = pm.pytensorf.rvs_to_value_vars(outs)
         else:
-            self.out_values = pm.aesaraf.rvs_to_value_vars([outs])[0]
+            self.out_values = pm.pytensorf.rvs_to_value_vars([outs])[0]
         self.in_values = pm.inputvars(self.out_values)
-        self.func = pm.aesaraf.compile_pymc(
+        self.func = pm.pytensorf.compile_pymc(
             self.in_values, self.out_values, **kwargs
         )
 
@@ -21,7 +22,7 @@ class Evaluator:
 
 
 def eval_in_model(outs, point=None, model=None, seed=None, **kwargs):
-    """Evaluate a Theano tensor or PyMC3 variable in a PyMC3 model
+    """Evaluate a PyTensor tensor or PyMC variable in a PyMC model
 
     This method builds a Theano function for evaluating a node in the graph
     given the required parameters. This will also cache the compiled Theano
