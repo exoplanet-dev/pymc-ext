@@ -2,9 +2,9 @@ __all__ = ["angle", "unit_disk"]
 
 import warnings
 
-import aesara.tensor as at
 import numpy as np
 import pymc as pm
+import pytensor.tensor as pt
 
 
 def angle(name, *, regularization=10.0, **kwargs):
@@ -21,15 +21,15 @@ def angle(name, *, regularization=10.0, **kwargs):
     value of ``10.0`` is a good starting point.
     """
     shape = kwargs.get("shape", ())
-    initval = kwargs.pop("initval", at.broadcast_to(0.0, shape))
+    initval = kwargs.pop("initval", pt.broadcast_to(0.0, shape))
     x1 = pm.Normal(f"__{name}_angle1", initval=np.sin(initval), **kwargs)
     x2 = pm.Normal(f"__{name}_angle2", initval=np.cos(initval), **kwargs)
     if regularization is not None:
         pm.Potential(
             f"__{name}_regularization",
-            regularization * at.log(x1**2 + x2**2),
+            regularization * pt.log(x1**2 + x2**2),
         )
-    return pm.Deterministic(name, at.arctan2(x1, x2))
+    return pm.Deterministic(name, pt.arctan2(x1, x2))
 
 
 def unit_disk(name_x, name_y, **kwargs):
@@ -57,6 +57,6 @@ def unit_disk(name_x, name_y, **kwargs):
         initval=initval[1] * np.sqrt(1 - initval[0] ** 2),
         **kwargs,
     )
-    norm = at.sqrt(1 - x1**2)
-    pm.Potential(f"__{name_y}_jacobian", at.log(norm))
+    norm = pt.sqrt(1 - x1**2)
+    pm.Potential(f"__{name_y}_jacobian", pt.log(norm))
     return x1, pm.Deterministic(name_y, x2 * norm)

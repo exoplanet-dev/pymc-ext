@@ -5,13 +5,26 @@ import pymc as pm
 
 
 class Evaluator:
-    def __init__(self, outs, **kwargs):
+    """Class to compile and evaluate components of a PyMC model
+
+    Args:
+        outs: The random variable, tensor, or list thereof to evaluate
+        model (Optional): PyMC model in which the variable are defined.
+                            Tries to infer current model context if None.
+        **kwargs: All other kwargs are passed to pymc.pytensorf.compile_pymc.
+    """
+
+    def __init__(self, outs, model=None, **kwargs):
+        # In PyMC >= 5, model context is required to replace rvs with values
+        # https://github.com/pymc-devs/pymc/pull/6281
+        # https://www.pymc.io/projects/docs/en/stable/learn/core_notebooks/pymc_pytensor.html#pymc
+        model = pm.modelcontext(None)
         if isinstance(outs, (tuple, list)):
-            self.out_values = pm.aesaraf.rvs_to_value_vars(outs)
+            self.out_values = model.replace_rvs_by_values(outs)
         else:
-            self.out_values = pm.aesaraf.rvs_to_value_vars([outs])[0]
+            self.out_values = model.replace_rvs_by_values([outs])[0]
         self.in_values = pm.inputvars(self.out_values)
-        self.func = pm.aesaraf.compile_pymc(
+        self.func = pm.pytensorf.compile_pymc(
             self.in_values, self.out_values, **kwargs
         )
 
@@ -21,7 +34,7 @@ class Evaluator:
 
 
 def eval_in_model(outs, point=None, model=None, seed=None, **kwargs):
-    """Evaluate a Theano tensor or PyMC3 variable in a PyMC3 model
+    """Evaluate a PyTensor tensor or PyMC variable in a PyMC model
 
     This method builds a Theano function for evaluating a node in the graph
     given the required parameters. This will also cache the compiled Theano
@@ -38,7 +51,7 @@ def eval_in_model(outs, point=None, model=None, seed=None, **kwargs):
     if point is None:
         model = pm.modelcontext(model)
         point = model.initial_point(random_seed=seed)
-    return Evaluator(outs, **kwargs)(point)
+    return Evaluator(outs, model=model, **kwargs)(point)
 
 
 def sample_inference_data(idata, size=1, random_seed=None, group="posterior"):
