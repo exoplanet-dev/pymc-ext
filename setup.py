@@ -23,7 +23,7 @@ CLASSIFIERS = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
 ]
-INSTALL_REQUIRES = ["pymc"]
+INSTALL_REQUIRES = ["pymc >= 5.0.0"]
 EXTRA_REQUIRE = {
     "test": ["pytest"],
     "notebooks": [
