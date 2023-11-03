@@ -18,7 +18,7 @@ class Evaluator:
         # In PyMC >= 5, model context is required to replace rvs with values
         # https://github.com/pymc-devs/pymc/pull/6281
         # https://www.pymc.io/projects/docs/en/stable/learn/core_notebooks/pymc_pytensor.html#pymc
-        model = pm.modelcontext(None)
+        model = pm.modelcontext(model)
         if isinstance(outs, (tuple, list)):
             self.out_values = model.replace_rvs_by_values(outs)
         else:
