@@ -1,7 +1,9 @@
 import numpy as np
 import pymc as pm
+import pytest
+from scipy.stats import invgamma
 
-from pymc_ext.utils import eval_in_model
+from pymc_ext.utils import estimate_inverse_gamma_parameters, eval_in_model
 
 
 def test_eval_in_model(seed=123409):
@@ -39,3 +41,24 @@ def test_eval_in_model_list(seed=123409):
         x_eval, y_eval = eval_in_model([x, y])
         assert np.allclose(x_eval, x_val)
         assert np.allclose(y_eval, y_val)
+
+
+@pytest.mark.parametrize(
+    "lower, upper, target",
+    [(1.0, 2.0, 0.01), (0.01, 0.1, 0.1), (10.0, 25.0, 0.01)],
+)
+def test_estimate_inverse_gamma_parameters(lower, upper, target):
+    np.random.seed(20200409)
+
+    params = estimate_inverse_gamma_parameters(lower, upper, target=target)
+    dist = invgamma(params["alpha"], scale=params["beta"])
+    assert np.allclose(dist.cdf(lower), target)
+    assert np.allclose(1 - dist.cdf(upper), target)
+
+    samples = pm.draw(pm.InverseGamma.dist(**params), draws=10000)
+    assert np.allclose(
+        (samples < lower).sum() / len(samples), target, atol=1e-2
+    )
+    assert np.allclose(
+        (samples > upper).sum() / len(samples), target, atol=1e-2
+    )
