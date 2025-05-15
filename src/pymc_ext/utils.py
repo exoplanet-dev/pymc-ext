@@ -18,7 +18,7 @@ class Evaluator:
         outs: The random variable, tensor, or list thereof to evaluate
         model (Optional): PyMC model in which the variable are defined.
                             Tries to infer current model context if None.
-        **kwargs: All other kwargs are passed to pymc.pytensorf.compile_pymc.
+        **kwargs: All other kwargs are passed to pymc.pytensorf.compile.
     """
 
     def __init__(self, outs, model=None, **kwargs):
@@ -31,7 +31,7 @@ class Evaluator:
         else:
             self.out_values = model.replace_rvs_by_values([outs])[0]
         self.in_values = pm.inputvars(self.out_values)
-        self.func = pm.pytensorf.compile_pymc(
+        self.func = pm.pytensorf.compile(
             self.in_values, self.out_values, **kwargs
         )
 
